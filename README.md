@@ -11,5 +11,6 @@ BookNest is a full-featured, intelligent book management web app that helps user
 🍔 Responsive UI with hamburger menu for mobile
 
 💻 Tech Stack
+
 Frontend: HTML5, CSS3, Bootstrap Icons, Vanilla JavaScript
 AI Features: Chatbot powered by GPT API (or similar)
