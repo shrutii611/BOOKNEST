@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Recommendation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f5e6cc;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .navbar {
+      background-color: #1e1e1e;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid #d2b48c;
+    }
+
+    .navbar-brand {
+      color: #f5e6cc !important;
+      font-weight: bold;
+    }
+
+    .nav-link {
+      color: #bfa77a !important;
+      margin-right: 15px;
+    }
+
+    .nav-link:hover {
+      color: #f5e6cc !important;
+    }
+
+    .carousel-item img {
+      height: 500px;
+      max-width: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+      /* background-color: #1a1a1a; */
+    }
+
+    h1 {
+      text-align: center;
+      color: #f5e6cc;
+      margin: 40px 0 20px;
+    }
+
+    .card {
+      background-color: #1e1e1e;
+      color: #f5e6cc;
+      border: 1px solid #2a2a2a;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(255, 214, 153, 0.1);
+    }
+
+    .card-img-top {
+      height: 230px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .btn-outline-secondary {
+      border-color: #bfa77a;
+      color: #bfa77a;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #bfa77a;
+      color: #121212;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      /* background-color: rgba(255, 255, 255, 0.3); */
+      border-radius: 90%;
+    }
+      /* Modal backdrop blur */
+  .blurred {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Modal styling */
+  .modal-custom {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+  }
+
+  .modal-content-custom {
+    background-color: #1e1e1e;
+    margin: 10% auto;
+    padding: 20px;
+    border: 2px solid #d2b48c;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    color: #f5e6cc;
+    text-align: center;
+  }
+
+  .modal-content-custom img {
+    max-width: 80%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+
+  .close-btn {
+    color: #bfa77a;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .close-btn:hover {
+    color: #f5e6cc;
+  }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="/">📚 Booknest</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" style="color: #bfa77a;"><i class="bi bi-list"></i>
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/recommend">Recommend</a></li>
+          
+          <li class="nav-item"><a class="nav-link" href="/bot">Ask the Bot</a></li>
+          <li class="nav-item"><a class="nav-link" href="/todo">Nest list</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Carousel -->
+  <div id="topBooksCarousel" class="carousel slide container mb-5 mt-4" data-ride="carousel" data-interval="3000">
+    <div class="carousel-inner">
+      {% for i in range(6) %}
+      <div class="carousel-item {% if i == 0 %}active{% endif %}">
+        <img src="{{ images[i] }}" class="d-block w-100" alt="Book {{ i }}">
+      </div>
+      {% endfor %}
+    </div>
+    <a class="carousel-control-prev" href="#topBooksCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </a>
+    <a class="carousel-control-next" href="#topBooksCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <!-- Book Grid -->
+  <h1>Top 50 Books</h1>
+  <div class="container">
+    <div class="row">
+      {% for i in range(book_name|length) %}
+      <div class="col-md-3 mb-4 d-flex align-items-stretch">
+        <div class="card shadow-sm">
+          <img src="{{ image[i] }}" class="card-img-top" alt="Book cover">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ book_name[i] }}</h5>
+            <p class="card-text mb-1">Author: <strong>{{ author[i] }}</strong></p>
+            <p class="card-text mb-1">Votes: {{ votes[i] }}</p>
+            <p class="card-text mb-2">Rating: <strong>{{ '%.2f'|format(rating[i]) }}</strong></p>
+            <button 
+  type="button" 
+  class="btn btn-sm btn-outline-secondary mt-auto"
+  onclick="openModal('{{ image[i] }}', '{{ book_name[i] }}', '{{ author[i] }}', '{{ votes[i] }}', '{{ '%.2f'|format(rating[i])}}')">
+  More Info
+</button>
+
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+<div id="bookModal" class="modal-custom">
+  <div class="modal-content-custom">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <img id="modalImage" src="" alt="Book image">
+    <h5 id="modalTitle"></h5>
+    <p><strong>Author:</strong> <span id="modalAuthor"></span></p>
+    <p><strong>Votes:</strong> <span id="modalVotes"></span></p>
+    <p><strong>Rating:</strong> <span id="modalRating"></span></p>
+  </div>
+</div>
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  function openModal(img, title, author, votes, rating) {
+    document.getElementById("modalImage").src = img;
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalAuthor").textContent = author;
+    document.getElementById("modalVotes").textContent = votes;
+    document.getElementById("modalRating").textContent = rating;
+
+    document.getElementById("bookModal").style.display = "block";
+    document.querySelector(".container").classList.add("blurred");
+    document.querySelector(".navbar").classList.add("blurred");
+    document.querySelector(".carousel").classList.add("blurred");
+  }
+
+  function closeModal() {
+    document.getElementById("bookModal").style.display = "none";
+    document.querySelector(".container").classList.remove("blurred");
+    document.querySelector(".navbar").classList.remove("blurred");
+    document.querySelector(".carousel").classList.remove("blurred");
+  }
+
+  // Optional: Close modal when clicking outside of it
+  window.onclick = function(event) {
+    const modal = document.getElementById("bookModal");
+    if (event.target === modal) {
+      closeModal();
+    }
+  };
+</script>
+
+</body>
+</html>
+
